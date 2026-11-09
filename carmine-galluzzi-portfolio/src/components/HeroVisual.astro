@@ -1,7 +1,7 @@
 ---
 /**
  * Visual della hero: ecosistema software astratto (SVG + CSS, nessuna libreria 3D).
- * Al centro lo spazio per la fotografia personale: finché `site.photo` è null mostra il monogramma CG.
+ * Al centro lo spazio per la fotografia personale: finché `site.photo` è null mostra il logo (monogramma CG).
  * Interamente decorativo per i lettori di schermo, tranne la fotografia quando presente.
  */
 import { site } from '../config/site';
@@ -74,9 +74,7 @@ const nodes = [
           ) : (
             <div class="grid h-full w-full place-items-center" aria-hidden="true">
               <div class="bg-grid absolute inset-0 opacity-70" />
-              <span class="relative font-display text-[clamp(2.75rem,9vw,4.75rem)] font-bold leading-none tracking-[-0.06em] text-ink">
-                {site.monogram}<span class="text-cyan">.</span>
-              </span>
+              <img src="/brand/logo-mark.webp" alt="" width="256" height="256" loading="eager" decoding="async" class="relative h-full w-full object-cover" />
             </div>
           )
         }

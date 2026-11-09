@@ -4,7 +4,6 @@ import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Icon from '../components/Icon.astro';
-import Logo from '../components/Logo.astro';
 import { extendedBio, site, getSameAs } from '../config/site';
 import { competences } from '../data/services';
 import { getFeaturedProjects } from '../data/projects';
@@ -97,9 +96,7 @@ const sectors = [
                 <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="eager" decoding="async" class="h-full w-full object-cover" />
               ) : (
                 <div class="relative grid h-full w-full place-items-center" aria-hidden="true">
-                  <div class="bg-grid absolute inset-0" />
-                  <div class="glow left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 text-primary/30" />
-                  <Logo size={132} class="relative" />
+                  <img src="/brand/logo-carmine-galluzzi.webp" alt="" width="1024" height="1024" loading="eager" decoding="async" class="absolute inset-0 h-full w-full bg-[#000225] object-contain" />
                 </div>
               )
             }

@@ -78,7 +78,8 @@ carmine-galluzzi-portfolio/
 │   ├── images/
 │   │   ├── projects/          # screenshot reali dei progetti (uno per cartella/slug)
 │   │   └── branding/          # fotografia personale e grafiche
-│   ├── favicon.svg
+│   ├── brand/          # logo definitivo (logo-mark.webp, logo-carmine-galluzzi.webp)
+│   ├── favicon.png, favicon-48.png, apple-touch-icon.png
 │   ├── og-image.svg           # sorgente dell'immagine social
 │   └── og-image.png           # immagine Open Graph 1200×630 usata nei meta tag
 ├── scripts/
@@ -198,7 +199,7 @@ Priorità:
 Se nessun valore è disponibile, il sito viene generato **senza** canonical assoluti, URL Open Graph e sitemap:
 non vengono mai pubblicati indirizzi di esempio. Su Netlify il valore è sempre disponibile.
 
-SEO implementata: title e description unici per pagina, canonical, Open Graph, Twitter/X Card, favicon SVG, `robots.txt`,
+SEO implementata: title e description unici per pagina, canonical, Open Graph, Twitter/X Card, favicon PNG e apple-touch-icon dal logo definitivo, `robots.txt`,
 sitemap XML (`/sitemap-index.xml`), un H1 per pagina, breadcrumb (visivi + JSON-LD) nel portfolio, JSON-LD `Person` e `WebSite`
 in homepage e `ProfilePage` nella pagina Chi sono, con soli dati veri; tag Open Graph completi
 (immagine 1200×630 con tipo e dimensioni) per l’anteprima dei link su Facebook, LinkedIn e WhatsApp.
