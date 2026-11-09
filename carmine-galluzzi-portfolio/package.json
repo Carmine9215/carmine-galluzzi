@@ -1,0 +1,29 @@
+{
+  "name": "carmine-galluzzi-portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Sito personale di Carmine Galluzzi — Software Developer & SaaS Founder. Astro statico + Tailwind CSS 4, pubblicato su Netlify.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.3.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify": "astro check && astro build && node scripts/verify-build.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.5.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.13.0",
+    "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.8.3"
+  }
+}

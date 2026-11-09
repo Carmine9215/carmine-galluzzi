@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { t } from '../i18n/ui';
+---
+
+<BaseLayout
+  title="Messaggio inviato"
+  description="Grazie per avermi contattato: la tua richiesta è stata inviata."
+  noindex
+>
+  <section class="relative overflow-hidden" aria-labelledby="sent-title">
+    <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+    <div class="container-x relative flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+      <span class="icon-tile h-16 w-16 rounded-2xl">
+        <Icon name="check" size={32} strokeWidth={2.25} />
+      </span>
+      <h1 id="sent-title" class="mt-8 text-4xl font-extrabold text-ink sm:text-5xl">Grazie, richiesta ricevuta</h1>
+      <p class="lead mx-auto mt-5 max-w-xl">
+        Ho ricevuto il tuo messaggio. Lo leggerò con attenzione e ti risponderò all’indirizzo email che hai indicato.
+      </p>
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href="/" class="btn btn-primary">
+          <Icon name="arrow-left" size={18} />
+          {t('cta.home')}
+        </a>
+        <a href="/portfolio/" class="btn btn-ghost">{t('cta.projects')}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

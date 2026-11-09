@@ -1,0 +1,50 @@
+---
+/**
+ * Marchio "CG." — monogramma con punto cyan.
+ * Usato in header, footer e hero.
+ */
+import { site } from '../config/site';
+
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 36, class: className = '' } = Astro.props;
+// id univoco per evitare duplicati quando il logo compare più volte nella pagina
+const gid = `cg-logo-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  class={className}
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <linearGradient id={`${gid}-b`} x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3B82F6"></stop>
+      <stop offset="0.5" stop-color="#22D3EE"></stop>
+      <stop offset="1" stop-color="#8B5CF6"></stop>
+    </linearGradient>
+    <linearGradient id={`${gid}-f`} x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16243D"></stop>
+      <stop offset="1" stop-color="#0B1426"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="62" height="62" rx="17" fill={`url(#${gid}-f)`}></rect>
+  <rect x="1" y="1" width="62" height="62" rx="17" fill="none" stroke={`url(#${gid}-b)`} stroke-width="2"></rect>
+  <text
+    x="29"
+    y="41"
+    text-anchor="middle"
+    font-family="Inter Display, Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+    font-size="24"
+    font-weight="700"
+    letter-spacing="-1.2"
+    fill="#F8FAFC">{site.monogram}</text
+  >
+  <circle cx="48" cy="39" r="3.4" fill="#22D3EE"></circle>
+</svg>

@@ -1,0 +1,331 @@
+---
+/**
+ * Modulo contatti compatibile con Netlify Forms.
+ * - Generato staticamente: Netlify lo rileva nell'HTML durante il deploy.
+ * - Invio con POST nativo verso /messaggio-inviato/: nessun finto successo via JavaScript.
+ * - Antispam: honeypot "bot-field" + filtro antispam integrato di Netlify.
+ * - Con JavaScript: errori accessibili per campo, riepilogo degli errori e riepilogo della richiesta
+ *   aggiornato in tempo reale (nessun passaggio aggiuntivo).
+ * - Senza JavaScript: resta attiva la validazione HTML nativa del browser.
+ * Dati raccolti: solo quelli necessari a rispondere alla richiesta.
+ */
+import { services } from '../data/services';
+import Icon from './Icon.astro';
+
+const budgets = ['Da valutare insieme', 'Fino a 5.000 €', '5.000 – 15.000 €', '15.000 – 30.000 €', 'Oltre 30.000 €'];
+const MESSAGE_MIN = 20;
+const MESSAGE_MAX = 5000;
+---
+
+<form
+  name="richiesta-progetto"
+  method="POST"
+  action="/messaggio-inviato/"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="space-y-6"
+  id="contact-form"
+>
+  <input type="hidden" name="form-name" value="richiesta-progetto" />
+
+  <!-- Honeypot antispam: invisibile agli utenti, da lasciare vuoto -->
+  <p class="hidden" aria-hidden="true">
+    <label>
+      Non compilare questo campo se sei una persona:
+      <input name="bot-field" tabindex="-1" autocomplete="off" />
+    </label>
+  </p>
+
+  <!-- Riepilogo errori (popolato via JS al tentativo di invio) -->
+  <div
+    id="form-errors"
+    class="rounded-xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-100"
+    role="alert"
+    tabindex="-1"
+    hidden
+  >
+    <p class="flex items-center gap-2 font-semibold">
+      <Icon name="alert" size={18} class="shrink-0 text-red-300" />
+      Controlla i campi indicati prima di inviare:
+    </p>
+    <ul class="mt-2 list-disc space-y-1 pl-6" data-error-list></ul>
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    <div>
+      <label for="cf-nome" class="field-label">Nome e cognome <span aria-hidden="true" class="text-cyan">*</span></label>
+      <input
+        id="cf-nome"
+        name="nome"
+        type="text"
+        class="field"
+        required
+        minlength="2"
+        maxlength="100"
+        autocomplete="name"
+        aria-describedby="cf-nome-error"
+      />
+      <p id="cf-nome-error" class="field-error" hidden></p>
+    </div>
+    <div>
+      <label for="cf-email" class="field-label">Email <span aria-hidden="true" class="text-cyan">*</span></label>
+      <input
+        id="cf-email"
+        name="email"
+        type="email"
+        class="field"
+        required
+        maxlength="254"
+        autocomplete="email"
+        inputmode="email"
+        spellcheck="false"
+        aria-describedby="cf-email-error"
+      />
+      <p id="cf-email-error" class="field-error" hidden></p>
+    </div>
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    <div>
+      <label for="cf-azienda" class="field-label">Azienda <span class="field-hint">(facoltativo)</span></label>
+      <input id="cf-azienda" name="azienda" type="text" class="field" maxlength="120" autocomplete="organization" />
+    </div>
+    <div>
+      <label for="cf-servizio" class="field-label">Servizio richiesto</label>
+      <select id="cf-servizio" name="servizio" class="field">
+        <option value="">Seleziona un servizio</option>
+        {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+        <option value="altro">Altro / non lo so ancora</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label for="cf-budget" class="field-label">Budget indicativo <span class="field-hint">(facoltativo)</span></label>
+    <select id="cf-budget" name="budget" class="field">
+      <option value="">Preferisco non indicarlo</option>
+      {budgets.map((b) => <option value={b}>{b}</option>)}
+    </select>
+  </div>
+
+  <div>
+    <label for="cf-messaggio" class="field-label">
+      Descrizione del progetto <span aria-hidden="true" class="text-cyan">*</span>
+    </label>
+    <textarea
+      id="cf-messaggio"
+      name="messaggio"
+      class="field"
+      rows="6"
+      required
+      minlength={MESSAGE_MIN}
+      maxlength={MESSAGE_MAX}
+      aria-describedby="cf-messaggio-hint cf-messaggio-error"
+      placeholder="Obiettivi, funzionalità principali, tempistiche desiderate…"></textarea>
+    <div class="mt-2 flex items-start justify-between gap-4 text-sm text-muted">
+      <p id="cf-messaggio-hint">Minimo {MESSAGE_MIN} caratteri.</p>
+      <p data-counter aria-hidden="true" class="shrink-0 font-mono text-xs" hidden>0 / {MESSAGE_MAX}</p>
+    </div>
+    <p id="cf-messaggio-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="rounded-2xl border border-line bg-bg/50 p-4 sm:p-5">
+    <div class="flex items-start gap-3">
+      <input
+        id="cf-privacy"
+        name="privacy"
+        type="checkbox"
+        value="accettata"
+        required
+        aria-describedby="cf-privacy-error"
+        class="mt-1 h-5 w-5 shrink-0 cursor-pointer rounded accent-primary"
+      />
+      <label for="cf-privacy" class="text-[0.9375rem] leading-relaxed text-muted">
+        Dichiaro di aver preso visione dell’<a
+          href="/privacy/"
+          target="_blank"
+          rel="noopener"
+          class="text-cyan underline underline-offset-2 hover:text-ink">informativa privacy</a
+        > e acconsento al trattamento dei dati per ricevere una risposta alla mia richiesta.
+        <span aria-hidden="true" class="text-cyan">*</span>
+      </label>
+    </div>
+    <p id="cf-privacy-error" class="field-error ml-8" hidden></p>
+  </div>
+
+  <!-- Riepilogo della richiesta: aggiornato mentre compili, visibile prima del pulsante di invio -->
+  <section id="form-summary" class="rounded-2xl border border-dashed border-line-strong bg-bg/40 p-5 sm:p-6" aria-labelledby="form-summary-title" hidden>
+    <h3 id="form-summary-title" class="mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-cyan">Riepilogo della richiesta</h3>
+    <dl class="mt-4 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[9rem_1fr]">
+      <dt class="text-muted">Nome</dt>
+      <dd class="break-words text-ink" data-summary="nome">—</dd>
+      <dt class="text-muted">Email</dt>
+      <dd class="break-all text-ink" data-summary="email">—</dd>
+      <dt class="text-muted">Azienda</dt>
+      <dd class="break-words text-ink" data-summary="azienda">—</dd>
+      <dt class="text-muted">Servizio</dt>
+      <dd class="text-ink" data-summary="servizio">—</dd>
+      <dt class="text-muted">Budget</dt>
+      <dd class="text-ink" data-summary="budget">—</dd>
+      <dt class="text-muted">Descrizione</dt>
+      <dd class="break-words text-ink" data-summary="messaggio">—</dd>
+    </dl>
+    <p class="mt-4 text-xs text-muted">Controlla i dati: potrai modificarli direttamente nei campi qui sopra.</p>
+  </section>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-sm text-muted"><span aria-hidden="true" class="text-cyan">*</span> Campi obbligatori</p>
+    <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">Invia la richiesta</button>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+
+  if (form) {
+    const $ = <T extends HTMLElement>(sel: string) => form.querySelector<T>(sel);
+    const nome = $<HTMLInputElement>('#cf-nome')!;
+    const email = $<HTMLInputElement>('#cf-email')!;
+    const azienda = $<HTMLInputElement>('#cf-azienda')!;
+    const servizio = $<HTMLSelectElement>('#cf-servizio')!;
+    const budget = $<HTMLSelectElement>('#cf-budget')!;
+    const messaggio = $<HTMLTextAreaElement>('#cf-messaggio')!;
+    const privacy = $<HTMLInputElement>('#cf-privacy')!;
+    const errorBox = $<HTMLDivElement>('#form-errors')!;
+    const errorList = $<HTMLUListElement>('[data-error-list]')!;
+    const summary = $<HTMLElement>('#form-summary')!;
+    const counter = $<HTMLElement>('[data-counter]')!;
+    const submit = $<HTMLButtonElement>('button[type="submit"]')!;
+    const MIN = messaggio.minLength;
+    const MAX = messaggio.maxLength;
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // Con JS attivo la validazione è gestita qui, con messaggi accessibili in italiano.
+    form.noValidate = true;
+    summary.hidden = false;
+    counter.hidden = false;
+
+    // Preselezione del servizio da ?servizio=slug
+    const wanted = new URLSearchParams(window.location.search).get('servizio');
+    if (wanted && Array.from(servizio.options).some((o) => o.value === wanted)) servizio.value = wanted;
+
+    type Check = { field: HTMLInputElement | HTMLTextAreaElement; label: string; validate: () => string };
+    const checks: Check[] = [
+      {
+        field: nome,
+        label: 'Nome e cognome',
+        validate: () => {
+          const v = nome.value.trim();
+          if (!v) return 'Inserisci nome e cognome.';
+          if (v.length < 2) return 'Il nome deve contenere almeno 2 caratteri.';
+          return '';
+        },
+      },
+      {
+        field: email,
+        label: 'Email',
+        validate: () => {
+          const v = email.value.trim();
+          if (!v) return 'Inserisci il tuo indirizzo email.';
+          if (!EMAIL_RE.test(v)) return 'Inserisci un indirizzo email valido, ad esempio nome@azienda.it.';
+          return '';
+        },
+      },
+      {
+        field: messaggio,
+        label: 'Descrizione del progetto',
+        validate: () => {
+          const len = messaggio.value.trim().length;
+          if (!len) return 'Descrivi brevemente il tuo progetto.';
+          if (len < MIN) return `La descrizione deve contenere almeno ${MIN} caratteri (ora ${len}).`;
+          if (len > MAX) return `La descrizione può contenere al massimo ${MAX} caratteri.`;
+          return '';
+        },
+      },
+      {
+        field: privacy,
+        label: 'Informativa privacy',
+        validate: () => (privacy.checked ? '' : 'Per inviare la richiesta conferma di aver letto l’informativa privacy.'),
+      },
+    ];
+
+    const show = (c: Check, message: string) => {
+      const box = document.getElementById(`${c.field.id}-error`);
+      c.field.setAttribute('aria-invalid', message ? 'true' : 'false');
+      if (box) {
+        box.textContent = message;
+        box.hidden = !message;
+      }
+    };
+
+    // Valida al blur solo dopo la prima interazione, poi aggiorna mentre si corregge
+    for (const c of checks) {
+      const evt = c.field.type === 'checkbox' ? 'change' : 'blur';
+      c.field.addEventListener(evt, () => {
+        c.field.dataset.touched = 'true';
+        show(c, c.validate());
+      });
+      c.field.addEventListener('input', () => {
+        if (c.field.getAttribute('aria-invalid') === 'true') show(c, c.validate());
+      });
+    }
+
+    // Riepilogo in tempo reale
+    const text = (el: HTMLSelectElement) => (el.value ? el.options[el.selectedIndex].text : '');
+    const set = (key: string, value: string, fallback = '—') => {
+      const dd = form.querySelector<HTMLElement>(`[data-summary="${key}"]`);
+      if (dd) dd.textContent = value || fallback;
+    };
+    const updateSummary = () => {
+      set('nome', nome.value.trim());
+      set('email', email.value.trim());
+      set('azienda', azienda.value.trim(), 'Non indicata');
+      set('servizio', text(servizio), 'Non indicato');
+      set('budget', text(budget), 'Non indicato');
+      const m = messaggio.value.trim();
+      set('messaggio', m.length > 160 ? `${m.slice(0, 160)}… (${m.length} caratteri)` : m);
+      counter.textContent = `${messaggio.value.length} / ${MAX}`;
+    };
+    form.addEventListener('input', updateSummary);
+    form.addEventListener('change', updateSummary);
+    updateSummary();
+
+    form.addEventListener('submit', (event) => {
+      const failed = checks.map((c) => ({ c, msg: c.validate() })).filter((r) => r.msg);
+      checks.forEach((c) => show(c, failed.find((f) => f.c === c)?.msg ?? ''));
+
+      if (failed.length) {
+        event.preventDefault();
+        errorList.replaceChildren(
+          ...failed.map(({ c, msg }) => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `#${c.field.id}`;
+            a.textContent = `${c.label}: ${msg}`;
+            a.className = 'underline underline-offset-2';
+            a.addEventListener('click', (e) => {
+              e.preventDefault();
+              c.field.focus();
+            });
+            li.append(a);
+            return li;
+          }),
+        );
+        errorBox.hidden = false;
+        failed[0].c.field.focus();
+        return;
+      }
+
+      errorBox.hidden = true;
+      // Nessun messaggio di successo qui: la conferma arriva solo dalla pagina /messaggio-inviato/
+      submit.disabled = true;
+      submit.textContent = 'Invio in corso…';
+    });
+
+    // Ripristina il pulsante se l'utente torna indietro (cache del browser)
+    window.addEventListener('pageshow', () => {
+      submit.disabled = false;
+      submit.textContent = 'Invia la richiesta';
+    });
+  }
+</script>

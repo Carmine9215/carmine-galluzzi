@@ -1,0 +1,52 @@
+---
+/**
+ * Sezione Tecnologie: stack realmente utilizzato (dichiarato dal proprietario del sito).
+ * Icone lineari coerenti, nessun logo di marca e nessuna certificazione.
+ */
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+
+const stack = [
+  { name: 'React', role: 'Interfacce e componenti', icon: 'atom' },
+  { name: 'TypeScript', role: 'Codice tipizzato e solido', icon: 'braces' },
+  { name: 'Supabase', role: 'Database, autenticazione, storage', icon: 'database' },
+  { name: 'GitHub', role: 'Versionamento e collaborazione', icon: 'git' },
+  { name: 'Netlify', role: 'Pubblicazione e hosting', icon: 'deploy' },
+  { name: 'API Integration', role: 'Servizi e piattaforme collegati', icon: 'api' },
+  { name: 'AI Automation', role: 'Agenti e flussi automatici', icon: 'ai' },
+] as const;
+---
+
+<section class="section relative border-t border-line" aria-labelledby="tech-title">
+  <div class="container-x grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+    <div class="reveal lg:sticky lg:top-32 lg:self-start">
+      <p class="eyebrow">{t('tech.eyebrow')}</p>
+      <h2 id="tech-title" class="h-section mt-5 text-ink">{t('tech.title')}</h2>
+      <p class="lead mt-5 max-w-md">
+        Gli strumenti con cui progetto e sviluppo le mie piattaforme: scelti per affidabilità, velocità e facilità di
+        evoluzione nel tempo.
+      </p>
+    </div>
+
+    <ul class="grid grid-cols-2 gap-3 sm:gap-4">
+      {
+        stack.map((s, i) => (
+          <li
+            class:list={[
+              'tech-tile card card-glow reveal group flex flex-col items-start gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5',
+              i === stack.length - 1 && 'col-span-2',
+            ]}
+          >
+            <span class="icon-tile h-11 w-11 shrink-0 rounded-xl sm:h-12 sm:w-12">
+              <Icon name={s.icon} size={22} strokeWidth={1.6} />
+            </span>
+            <span class="min-w-0">
+              <span class="block font-display text-[0.98rem] font-bold leading-tight text-ink sm:text-[1.05rem]">{s.name}</span>
+              <span class="mt-0.5 block text-[0.8rem] leading-snug text-muted sm:text-[0.85rem]">{s.role}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

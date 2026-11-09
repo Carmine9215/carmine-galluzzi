@@ -1,0 +1,157 @@
+---
+/**
+ * Card progetto con tre varianti per un layout editoriale:
+ * - feature:    grande, anteprima e contenuto affiancati (desktop)
+ * - standard:   anteprima sopra, contenuto sotto
+ * - horizontal: anteprima compatta a sinistra
+ * Tutta la card è cliccabile tramite il link "Scopri il progetto".
+ */
+import type { Project } from '../data/projects';
+import { categoryLabelKey } from '../data/projects';
+import ProjectVisual from './ProjectVisual.astro';
+import StatusBadge from './StatusBadge.astro';
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+
+export type CardVariant = 'feature' | 'standard' | 'horizontal';
+
+interface Props {
+  project: Project;
+  variant?: CardVariant;
+  headingLevel?: 'h2' | 'h3';
+  /** false per disattivare la comparsa allo scroll (es. griglia filtrabile) */
+  reveal?: boolean;
+  class?: string;
+}
+const { project, variant = 'standard', headingLevel = 'h3', reveal = true, class: className = '' } = Astro.props;
+const Heading = headingLevel;
+const href = `/portfolio/${project.slug}/`;
+const techs = project.technologies.slice(0, 4);
+const isLive = project.status === 'pubblicato' || project.status === 'demo-disponibile';
+const layout = {
+  feature: 'lg:grid lg:grid-cols-[1.3fr_1fr]',
+  standard: 'flex flex-col',
+  horizontal: 'sm:grid sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]',
+}[variant];
+const visualClass = {
+  feature: 'aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[22rem] lg:border-b-0 lg:border-r',
+  standard: 'aspect-[16/10]',
+  horizontal: 'aspect-[16/10] sm:aspect-auto sm:h-full sm:min-h-[15rem] sm:border-b-0 sm:border-r',
+}[variant];
+---
+
+<article
+  class:list={[
+    'project-card card card-glow group h-full overflow-hidden',
+    layout,
+    reveal && 'reveal',
+    className,
+  ]}
+  data-variant={variant}
+>
+  <div class:list={['relative overflow-hidden border-b border-line bg-bg-2', visualClass]}>
+    <div class="project-visual absolute inset-0">
+      <ProjectVisual project={project} />
+    </div>
+    <span
+      class="project-arrow absolute right-4 top-4 z-[1] grid h-11 w-11 place-items-center rounded-full bg-ink text-bg shadow-lg"
+      aria-hidden="true"
+    >
+      <Icon name="arrow-up-right" size={18} strokeWidth={2} />
+    </span>
+  </div>
+
+  <div class:list={['flex flex-1 flex-col', variant === 'feature' ? 'p-7 sm:p-10' : 'p-6 sm:p-7']}>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+      <span class="mono text-[0.7rem] font-medium uppercase tracking-[0.14em] text-cyan">
+        {t(categoryLabelKey(project.category))}
+      </span>
+      <StatusBadge status={project.status} class="ml-auto" />
+    </div>
+
+    <Heading
+      class:list={[
+        'mt-5 font-display font-bold tracking-tight text-ink',
+        variant === 'feature' ? 'text-[clamp(1.75rem,1.3rem+1.6vw,2.5rem)] leading-[1.05]' : 'h-card',
+      ]}
+    >
+      {project.name}
+    </Heading>
+    <p class:list={['mt-3 leading-relaxed text-muted', variant === 'feature' ? 'text-[1.0625rem]' : 'text-[0.9375rem]']}>
+      {project.shortDescription}
+    </p>
+
+    {
+      variant === 'feature' && project.features.length > 0 && (
+        <div class="mt-6">
+          <p class="mono text-[0.68rem] uppercase tracking-[0.14em] text-muted">
+            {isLive ? 'Funzionalità principali' : 'Funzionalità previste'}
+          </p>
+          <ul class="mt-3 space-y-2">
+            {project.features.slice(0, 3).map((f) => (
+              <li class="flex gap-2.5 text-[0.9375rem] text-ink/85">
+                <Icon name="check" size={18} class="mt-0.5 shrink-0 text-cyan" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    {
+      techs.length > 0 && (
+        <ul class="mt-5 flex flex-wrap gap-1.5" aria-label="Tecnologie confermate">
+          {techs.map((tech) => (
+            <li class="tag">{tech}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="mt-auto pt-6">
+      <a href={href} class="stretched-link link-arrow text-[0.9375rem]" aria-label={`${t('cta.discoverProject')}: ${project.name}`}>
+        {t('cta.discoverProject')}
+        <Icon name="arrow-right" size={17} />
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card:hover {
+    border-color: rgb(148 163 184 / 0.24);
+    transform: translateY(-5px);
+    box-shadow: 0 34px 70px -34px rgb(0 0 0 / 0.95);
+  }
+  .project-visual {
+    transition: transform 0.7s var(--ease-out-soft);
+  }
+  .project-card:hover .project-visual {
+    transform: scale(1.04);
+  }
+  .project-arrow {
+    opacity: 0;
+    transform: translate(-6px, 6px) scale(0.9);
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s var(--ease-out-soft);
+  }
+  .project-card:hover .project-arrow,
+  .project-card:focus-within .project-arrow {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: none) {
+    .project-arrow {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-card:hover,
+    .project-card:hover .project-visual {
+      transform: none;
+    }
+  }
+</style>

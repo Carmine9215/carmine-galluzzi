@@ -1,0 +1,147 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { navigation, site, legal, contacts, getConfiguredContacts } from '../config/site';
+import { services } from '../data/services';
+import { getVisibleProjects } from '../data/projects';
+import { t, type UIKey } from '../i18n/ui';
+
+/** Anno calcolato automaticamente a ogni build. */
+const year = new Date().getFullYear();
+const configured = getConfiguredContacts();
+/** Icone social mostrate solo se configurate con URL reali (GitHub, LinkedIn, Facebook, Email). */
+const socialIds = ['github', 'linkedin', 'facebook', 'email'] as const;
+const social = configured.filter((c) => (socialIds as readonly string[]).includes(c.id));
+const projects = getVisibleProjects().slice(0, 5);
+const iconFor = (id: string) => (id === 'email' ? 'mail' : id) as 'mail' | 'github' | 'linkedin' | 'facebook' | 'whatsapp';
+const linkClass = 'text-[0.9rem] text-muted transition-colors hover:text-ink';
+const headingClass = 'mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-ink/70';
+---
+
+<footer class="relative mt-auto overflow-hidden bg-[#050913]">
+  <hr class="divider-glow" />
+  <div class="glow -top-48 left-1/2 hidden h-80 w-[50rem] -translate-x-1/2 text-primary/10 sm:block" aria-hidden="true"></div>
+
+  <div class="container-x relative grid gap-12 py-16 lg:grid-cols-[1.3fr_2.7fr] lg:gap-16 lg:py-20">
+    <div class="max-w-sm">
+      <a href="/" class="inline-flex items-center gap-3 rounded-xl" aria-label={`${site.name} — Home`}>
+        <Logo size={44} />
+        <span class="leading-tight">
+          <span class="block font-display text-lg font-bold tracking-tight text-ink">{site.name}</span>
+          <span class="block text-[0.8rem] text-muted">{site.jobTitle}</span>
+        </span>
+      </a>
+      <p class="mt-6 text-[0.9375rem] leading-relaxed text-muted">{site.bio}</p>
+      {contacts.location && <p class="mt-2 text-sm text-muted">{contacts.location}</p>}
+      {
+        social.length > 0 && (
+          <ul class="mt-6 flex gap-2" aria-label="Profili e contatti">
+            {social.map((c) => (
+              <li>
+                <a
+                  href={c.href}
+                  class="grid h-11 w-11 place-items-center rounded-full border border-line-strong text-muted transition-colors hover:border-cyan/50 hover:text-ink"
+                  aria-label={c.id === 'email' ? `Email: ${c.label}` : c.label}
+                  {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  <Icon name={iconFor(c.id)} size={18} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <a href="/contatti/" class="btn btn-ghost btn-sm mt-7">
+        {t('nav.start')}
+        <Icon name="arrow-right" size={15} />
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+      <nav aria-labelledby="footer-nav">
+        <h2 id="footer-nav" class={headingClass}>{t('footer.nav')}</h2>
+        <ul class="mt-5 space-y-3">
+          {
+            navigation.map((item) => (
+              <li>
+                <a href={item.href} class={linkClass}>
+                  {t(`nav.${item.key}` as UIKey)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-services">
+        <h2 id="footer-services" class={headingClass}>{t('footer.services')}</h2>
+        <ul class="mt-5 space-y-3">
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/servizi/#${s.slug}`} class={linkClass}>
+                  {s.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-projects">
+        <h2 id="footer-projects" class={headingClass}>{t('footer.projects')}</h2>
+        <ul class="mt-5 space-y-3">
+          {
+            projects.map((p) => (
+              <li>
+                <a href={`/portfolio/${p.slug}/`} class={linkClass}>
+                  {p.name}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="/portfolio/" class="link-arrow text-[0.9rem]">
+              {t('cta.allProjects')}
+              <Icon name="arrow-right" size={15} />
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class={headingClass}>{t('footer.contacts')}</h2>
+        <ul class="mt-5 space-y-3">
+          {
+            configured.map((c) => (
+              <li>
+                <a
+                  href={c.href}
+                  class={`inline-flex items-center gap-2 break-all ${linkClass}`}
+                  {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  <Icon name={iconFor(c.id)} size={16} class="shrink-0" />
+                  {c.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="/contatti/" class={linkClass}>{t('footer.contactForm')}</a>
+          </li>
+          <li>
+            <a href="/privacy/" class={linkClass}>{t('footer.privacy')}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-x relative">
+    <hr class="divider-glow opacity-50" />
+    <div class="flex flex-col gap-3 py-7 text-[0.8rem] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {legal.ownerName} — {site.jobTitle}. {t('footer.rights')}{legal.vatNumber && <span> · P. IVA {legal.vatNumber}</span>}</p>
+      <a href="/privacy/" class="transition-colors hover:text-ink">{t('footer.privacy')}</a>
+    </div>
+  </div>
+</footer>

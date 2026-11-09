@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { t } from '../i18n/ui';
+
+const suggestions = [
+  { href: '/portfolio/', label: 'Portfolio', text: 'Le piattaforme che sto progettando e sviluppando' },
+  { href: '/servizi/', label: 'Servizi', text: 'SaaS, web app, marketplace, AI e consulenza' },
+  { href: '/chi-sono/', label: 'Chi sono', text: 'Visione, tecnologie e metodo di lavoro' },
+  { href: '/contatti/', label: 'Contatti', text: 'Raccontami il tuo progetto' },
+];
+---
+
+<BaseLayout title="Pagina non trovata" description="La pagina che stai cercando non esiste o è stata spostata." noindex>
+  <section class="relative overflow-hidden" aria-labelledby="nf-title">
+    <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+    <div class="glow -top-32 left-1/2 h-96 w-[40rem] -translate-x-1/2 text-primary/25" aria-hidden="true"></div>
+    <div class="container-x relative flex flex-col items-center py-20 text-center sm:py-28">
+      <p class="gradient-text font-mono text-7xl font-extrabold leading-none sm:text-8xl" aria-hidden="true">404</p>
+      <h1 id="nf-title" class="mt-6 text-3xl font-extrabold text-ink sm:text-4xl">Pagina non trovata</h1>
+      <p class="lead mt-4 max-w-lg">La pagina che stai cercando non esiste o è stata spostata. Ecco da dove puoi ripartire.</p>
+      <a href="/" class="btn btn-primary mt-8">
+        <Icon name="arrow-left" size={18} />
+        {t('cta.home')}
+      </a>
+
+      <ul class="mt-14 grid w-full max-w-3xl gap-4 text-left sm:grid-cols-2">
+        {
+          suggestions.map((s) => (
+            <li class="card card-hover card-glow group relative p-5">
+              <a href={s.href} class="font-semibold text-ink after:absolute after:inset-0 after:rounded-[1.25rem] focus-visible:outline-none">
+                {s.label}
+              </a>
+              <p class="mt-1 text-sm text-muted">{s.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

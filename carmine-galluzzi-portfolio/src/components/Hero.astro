@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import HeroVisual from './HeroVisual.astro';
+import { site } from '../config/site';
+import { t } from '../i18n/ui';
+---
+
+<section class="relative overflow-hidden" aria-labelledby="hero-title">
+  <div class="bg-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="glow -left-56 -top-56 h-[40rem] w-[40rem] text-primary/25" aria-hidden="true"></div>
+  <div class="glow -right-64 top-10 hidden h-[36rem] w-[36rem] text-violet/20 sm:block" aria-hidden="true"></div>
+
+  <div
+    class="container-x relative grid grid-cols-[minmax(0,1fr)] items-center gap-x-10 gap-y-14 pb-20 pt-10 sm:pt-16 lg:min-h-[calc(100svh-4.5rem)] lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:pb-24 lg:pt-12"
+  >
+    <div>
+      <p class="hero-in badge max-w-full gap-2.5 whitespace-normal border-line bg-bg-2/70 px-3.5 py-1.5" style="--d:0ms">
+        <span class="pulse-dot h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_10px_#22d3ee]" aria-hidden="true"></span>
+        <span class="mono text-[0.64rem] font-medium uppercase tracking-[0.12em] text-ink/85 sm:text-[0.68rem] sm:tracking-[0.16em]">{t('hero.badge')}</span>
+      </p>
+
+      <h1 id="hero-title" class="mt-7">
+        <span class="hero-in display-xl block text-ink" style="--d:80ms">{site.name}</span>
+        <span
+          class="hero-in mt-5 block max-w-[34rem] font-display text-[clamp(1.5rem,1.05rem+1.7vw,2.35rem)] font-bold leading-[1.15] tracking-[-0.03em] text-ink/90"
+          style="--d:180ms"
+        >
+          {t('hero.headline.a')} <span class="text-gradient">{t('hero.headline.b')}</span>
+        </span>
+      </h1>
+
+      <p class="hero-in lead mt-6 max-w-xl" style="--d:280ms">{t('hero.description')}</p>
+
+      <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <a href="/portfolio/" class="hero-in btn btn-primary btn-lg" style="--d:380ms">
+          {t('hero.cta.projects')}
+          <Icon name="arrow-right" size={18} />
+        </a>
+        <a href="/contatti/" class="hero-in btn btn-ghost btn-lg" style="--d:460ms">{t('hero.cta.idea')}</a>
+      </div>
+    </div>
+
+    <div class="hero-in relative px-4 sm:px-8 lg:px-0" style="--d:200ms">
+      <HeroVisual />
+    </div>
+  </div>
+</section>

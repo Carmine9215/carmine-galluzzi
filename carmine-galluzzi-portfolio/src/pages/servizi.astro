@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBanner from '../components/CtaBanner.astro';
+import Icon from '../components/Icon.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServicesGrid from '../components/ServicesGrid.astro';
+import { services, workSteps, serviceFaq } from '../data/services';
+import { t } from '../i18n/ui';
+---
+
+<BaseLayout
+  title="Servizi: sviluppo SaaS, software personalizzato, AI e marketplace"
+  description="Software personalizzati per aziende: sviluppo piattaforme SaaS, applicazioni web, marketplace, agenti AI e automazioni AI per aziende, consulenza tecnica. Preventivi su misura."
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden" aria-labelledby="services-title">
+    <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+    <div class="glow -right-40 -top-48 h-[34rem] w-[34rem] text-primary/25" aria-hidden="true"></div>
+    <div class="container-x relative pb-16 pt-14 sm:pt-20 lg:pb-20 lg:pt-24">
+      <p class="hero-in eyebrow">{t('services.eyebrow')}</p>
+      <h1 id="services-title" class="hero-in display-lg mt-6 max-w-4xl text-ink" style="--d:80ms">
+        Soluzioni digitali costruite <span class="text-gradient">per il futuro</span>
+      </h1>
+      <p class="hero-in lead mt-6 max-w-2xl" style="--d:160ms">
+        Dall’analisi dell’idea alla pubblicazione: piattaforme SaaS, software personalizzato, agenti AI, marketplace e
+        applicazioni web per aziende, startup e professionisti. Ogni progetto riceve un preventivo personalizzato, senza
+        listini predefiniti.
+      </p>
+      <div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row" style="--d:240ms">
+        <a href="/contatti/" class="btn btn-primary btn-lg">
+          {t('cta.requestQuote')}
+          <Icon name="arrow-right" size={18} />
+        </a>
+        <a href="/portfolio/" class="btn btn-ghost btn-lg">{t('cta.projects')}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panoramica numerata -->
+  <section aria-labelledby="overview-title">
+    <div class="container-x">
+      <h2 id="overview-title" class="sr-only">Panoramica dei servizi</h2>
+      <div class="reveal">
+        <ServicesGrid />
+      </div>
+    </div>
+  </section>
+
+  <!-- Dettaglio dei servizi -->
+  <section class="section" aria-label="Dettaglio dei servizi">
+    <div class="container-x space-y-6">
+      {
+        services.map((s, i) => (
+          <article
+            id={s.slug}
+            class="card reveal scroll-mt-28 overflow-hidden"
+            aria-labelledby={`${s.slug}-title`}
+          >
+            <div class="grid lg:grid-cols-[0.9fr_1.1fr]">
+              <div class="relative flex flex-col border-b border-line p-7 sm:p-10 lg:border-b-0 lg:border-r">
+                <div class="flex items-center gap-4">
+                  <span class="icon-tile">
+                    <Icon name={s.icon} size={24} strokeWidth={1.6} />
+                  </span>
+                  <span class="mono text-sm text-muted">{String(i + 1).padStart(2, '0')} / {String(services.length).padStart(2, '0')}</span>
+                </div>
+                <h2 id={`${s.slug}-title`} class="mt-7 font-display text-[clamp(1.75rem,1.4rem+1.3vw,2.4rem)] font-bold leading-[1.08] tracking-[-0.03em] text-ink">
+                  {s.title}
+                </h2>
+                <p class="mt-3 text-lg font-medium text-ink/85">{s.summary}</p>
+                <p class="mt-6 rounded-2xl border border-line bg-bg/50 p-4 text-[0.9375rem] leading-relaxed text-muted">
+                  <strong class="text-ink">Ideale per:</strong> {s.idealFor}
+                </p>
+                <div class="mt-8 lg:mt-auto lg:pt-8">
+                  <a href={`/contatti/?servizio=${s.slug}`} class="btn btn-primary" aria-label={`${t('cta.requestQuote')}: ${s.title}`}>
+                    {t('cta.requestQuote')}
+                    <Icon name="arrow-right" size={18} />
+                  </a>
+                </div>
+              </div>
+              <div class="p-7 sm:p-10">
+                <p class="text-[1.0625rem] leading-relaxed text-muted">{s.description}</p>
+                <div class="mt-8 grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <h3 class="mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-cyan">Cosa ottieni</h3>
+                    <ul class="mt-4 space-y-3">
+                      {s.benefits.map((b) => (
+                        <li class="flex gap-3 text-[0.9375rem] leading-relaxed text-ink/90">
+                          <Icon name="check" size={18} class="mt-0.5 shrink-0 text-cyan" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 class="mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-violet-soft">Cosa comprende</h3>
+                    <ul class="mt-4 space-y-3">
+                      {s.includes.map((x) => (
+                        <li class="flex gap-3 text-[0.9375rem] leading-relaxed text-muted">
+                          <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet" aria-hidden="true" />
+                          <span>{x}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Metodo -->
+  <section class="section relative bg-bg-2/60" aria-labelledby="process-title">
+    <div class="divider-glow absolute inset-x-0 top-0 opacity-50" aria-hidden="true"></div>
+    <div class="container-x">
+      <SectionHeading
+        id="process-title"
+        eyebrow="Metodo"
+        title="Dall’idea alla pubblicazione"
+        intro="Lo stesso percorso in quattro fasi per ogni servizio, con obiettivi chiari a ogni passaggio."
+      />
+      <ol class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          workSteps.map((step, i) => (
+            <li class="reveal">
+              <div class="flex items-center gap-4">
+                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line-strong bg-bg font-mono text-sm text-cyan">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span class="hidden h-px flex-1 bg-linear-to-r from-line-strong to-transparent lg:block" aria-hidden="true" />
+              </div>
+              <h3 class="h-card mt-6 text-ink">{step.title}</h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{step.description}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Domande frequenti -->
+  <section class="section" aria-labelledby="faq-title">
+    <div class="container-x grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+      <SectionHeading id="faq-title" eyebrow="Domande frequenti" title="Prima di iniziare" />
+      <div class="space-y-3">
+        {
+          serviceFaq.map((item) => (
+            <details class="faq card reveal group p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold text-ink [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line-strong text-cyan transition-transform duration-300 group-open:rotate-45" aria-hidden="true">
+                  <Icon name="close" size={16} class="rotate-45" />
+                </span>
+              </summary>
+              <p class="mt-4 leading-relaxed text-muted">{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBanner />
+</BaseLayout>

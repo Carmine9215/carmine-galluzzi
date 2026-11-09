@@ -1,0 +1,336 @@
+---
+/**
+ * Anteprima del progetto: immagine reale se presente, altrimenti un'interfaccia astratta
+ * (diversa per ogni progetto tramite il campo `preview`), marcata come "Anteprima illustrativa".
+ * Nessuno screenshot inventato: forme e barre, nessun testo o dato fittizio.
+ */
+import type { Project, PreviewKind } from '../data/projects';
+import { t } from '../i18n/ui';
+
+interface Props {
+  project: Project;
+  /** true per l'immagine principale above-the-fold (niente lazy loading) */
+  eager?: boolean;
+  class?: string;
+}
+
+const { project, eager = false, class: className = '' } = Astro.props;
+
+const palettes = {
+  blue: { a: '#3B82F6', b: '#22D3EE' },
+  cyan: { a: '#22D3EE', b: '#3B82F6' },
+  violet: { a: '#8B5CF6', b: '#3B82F6' },
+} as const;
+const pal = palettes[project.accent];
+
+const fallback: Record<Project['category'], PreviewKind> = {
+  saas: 'dashboard',
+  marketplace: 'listing',
+  'servizi-digitali': 'map',
+  'ai-automazioni': 'chat',
+};
+const kind: PreviewKind = project.preview ?? fallback[project.category];
+
+const initials = project.name
+  .replace(/[^A-Za-z0-9 ]/g, ' ')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((w) => w[0])
+  .join('')
+  .toUpperCase();
+
+const uid = `pv-${project.slug}-${Math.random().toString(36).slice(2, 7)}`;
+const acc = `url(#${uid}-acc)`;
+const label = t('preview.label');
+const ln = '#94A3B8';
+const ink = '#F8FAFC';
+const mapPins: [number, number, boolean][] = [
+  [120, 130, false],
+  [300, 250, true],
+  [420, 140, false],
+  [540, 290, false],
+  [210, 320, false],
+];
+---
+
+{
+  project.image ? (
+    <img
+      src={project.image.src}
+      alt={project.image.alt}
+      width={project.image.width}
+      height={project.image.height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchpriority={eager ? 'high' : undefined}
+      class:list={['h-full w-full object-cover', className]}
+    />
+  ) : (
+    <div class:list={['relative h-full w-full', className]}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 800 500"
+        width="800"
+        height="500"
+        role="img"
+        aria-label={`${label} del progetto ${project.name}: interfaccia astratta, non uno screenshot reale`}
+        class="h-full w-full"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="800" y2="500" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#0B1528" />
+            <stop offset="1" stop-color="#0D1526" />
+          </linearGradient>
+          <radialGradient id={`${uid}-glow`} cx="0.82" cy="0.05" r="0.75">
+            <stop offset="0" stop-color={pal.a} stop-opacity="0.5" />
+            <stop offset="1" stop-color={pal.a} stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id={`${uid}-acc`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color={pal.a} />
+            <stop offset="1" stop-color={pal.b} />
+          </linearGradient>
+          <linearGradient id={`${uid}-area`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color={pal.b} stop-opacity="0.35" />
+            <stop offset="1" stop-color={pal.b} stop-opacity="0" />
+          </linearGradient>
+          <pattern id={`${uid}-grid`} width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M40 0H0V40" fill="none" stroke={ln} stroke-opacity="0.06" />
+          </pattern>
+        </defs>
+        <rect width="800" height="500" fill={`url(#${uid}-bg)`} />
+        <rect width="800" height="500" fill={`url(#${uid}-grid)`} />
+        <rect width="800" height="500" fill={`url(#${uid}-glow)`} />
+
+        <g transform="translate(70 62)">
+          <rect width="660" height="400" rx="18" fill="#060B16" fill-opacity="0.8" stroke={ln} stroke-opacity="0.18" />
+          <circle cx="24" cy="22" r="5" fill={ln} fill-opacity="0.4" />
+          <circle cx="42" cy="22" r="5" fill={ln} fill-opacity="0.28" />
+          <circle cx="60" cy="22" r="5" fill={ln} fill-opacity="0.18" />
+          <rect x="230" y="14" width="200" height="16" rx="8" fill={ln} fill-opacity="0.08" />
+          <rect x="0" y="44" width="660" height="1" fill={ln} fill-opacity="0.14" />
+
+          {kind === 'requests' && (
+            <g>
+              <rect x="24" y="66" width="236" height="310" rx="16" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              <circle cx="142" cy="170" r="62" fill={pal.a} fill-opacity="0.12" />
+              <circle cx="142" cy="170" r="44" fill={acc} />
+              <rect x="122" y="164" width="40" height="12" rx="6" fill={ink} fill-opacity="0.9" />
+              <rect x="62" y="262" width="160" height="10" rx="5" fill={ink} fill-opacity="0.7" />
+              <rect x="82" y="282" width="120" height="8" rx="4" fill={ln} fill-opacity="0.35" />
+              <rect x="52" y="320" width="180" height="36" rx="18" fill={ln} fill-opacity="0.1" />
+              {[0, 1, 2, 3].map((i) => (
+                <g transform={`translate(282 ${66 + i * 80})`}>
+                  <rect width="354" height="68" rx="14" fill={ln} fill-opacity={i === 0 ? 0.1 : 0.05} stroke={i === 0 ? pal.b : ln} stroke-opacity={i === 0 ? 0.55 : 0.12} />
+                  <circle cx="34" cy="34" r="16" fill={i === 0 ? pal.b : ln} fill-opacity={i === 0 ? 0.9 : 0.15} />
+                  <rect x="64" y="22" width={120 + (i % 2) * 40} height="9" rx="4.5" fill={ink} fill-opacity="0.75" />
+                  <rect x="64" y="40" width="90" height="7" rx="3.5" fill={ln} fill-opacity="0.35" />
+                  <rect x="270" y="24" width="64" height="20" rx="10" fill={i === 0 ? pal.a : ln} fill-opacity={i === 0 ? 0.35 : 0.12} />
+                </g>
+              ))}
+            </g>
+          )}
+
+          {kind === 'chat' && (
+            <g>
+              <rect x="0" y="45" width="190" height="355" fill={ln} fill-opacity="0.04" />
+              {[0, 1, 2, 3, 4].map((i) => (
+                <g transform={`translate(16 ${62 + i * 62})`}>
+                  <rect width="158" height="50" rx="12" fill={i === 1 ? pal.a : ln} fill-opacity={i === 1 ? 0.18 : 0.04} />
+                  <circle cx="24" cy="25" r="14" fill={i === 1 ? acc : ln} fill-opacity={i === 1 ? 1 : 0.2} />
+                  <rect x="46" y="16" width="80" height="8" rx="4" fill={ink} fill-opacity="0.65" />
+                  <rect x="46" y="31" width="58" height="6" rx="3" fill={ln} fill-opacity="0.3" />
+                </g>
+              ))}
+              <rect x="214" y="72" width="250" height="52" rx="18" fill={ln} fill-opacity="0.1" />
+              <rect x="232" y="91" width="190" height="8" rx="4" fill={ln} fill-opacity="0.5" />
+              <rect x="232" y="105" width="130" height="7" rx="3.5" fill={ln} fill-opacity="0.3" />
+              <rect x="380" y="146" width="256" height="58" rx="18" fill={acc} />
+              <rect x="400" y="166" width="196" height="8" rx="4" fill={ink} fill-opacity="0.9" />
+              <rect x="400" y="182" width="140" height="7" rx="3.5" fill={ink} fill-opacity="0.65" />
+              <rect x="214" y="226" width="200" height="46" rx="18" fill={ln} fill-opacity="0.1" />
+              <rect x="232" y="245" width="150" height="8" rx="4" fill={ln} fill-opacity="0.5" />
+              <g transform="translate(560 228)">
+                <rect width="76" height="40" rx="14" fill={ln} fill-opacity="0.08" stroke={pal.b} stroke-opacity="0.4" />
+                <path d="M30 14v-3a8 8 0 0 1 16 0v3M26 14h24v14H26z" fill="none" stroke={pal.b} stroke-width="2.4" stroke-linejoin="round" />
+              </g>
+              <rect x="214" y="336" width="422" height="44" rx="22" fill={ln} fill-opacity="0.06" stroke={ln} stroke-opacity="0.16" />
+              <circle cx="612" cy="358" r="14" fill={acc} />
+            </g>
+          )}
+
+          {kind === 'listing' && (
+            <g>
+              <rect x="24" y="64" width="380" height="34" rx="17" fill={ln} fill-opacity="0.07" stroke={ln} stroke-opacity="0.14" />
+              <circle cx="46" cy="81" r="7" fill="none" stroke={ln} stroke-opacity="0.5" stroke-width="2" />
+              <rect x="62" y="77" width="140" height="8" rx="4" fill={ln} fill-opacity="0.3" />
+              {[0, 1, 2].map((i) => (
+                <rect x={420 + i * 74} y="66" width="64" height="30" rx="15" fill={i === 0 ? pal.a : ln} fill-opacity={i === 0 ? 0.4 : 0.08} />
+              ))}
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <g transform={`translate(${24 + (i % 3) * 206} ${116 + Math.floor(i / 3) * 142})`}>
+                  <rect width="190" height="128" rx="12" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+                  <rect x="10" y="10" width="170" height="64" rx="8" fill={i === 4 ? acc : ln} fill-opacity={i === 4 ? 0.85 : 0.1} />
+                  <rect x="12" y="86" width="104" height="8" rx="4" fill={ink} fill-opacity="0.7" />
+                  <rect x="12" y="104" width="66" height="7" rx="3.5" fill={ln} fill-opacity="0.35" />
+                  <rect x="138" y="98" width="40" height="18" rx="9" fill={pal.b} fill-opacity="0.2" />
+                </g>
+              ))}
+            </g>
+          )}
+
+          {kind === 'gallery' && (
+            <g>
+              <rect x="24" y="66" width="300" height="310" rx="16" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              <g transform="translate(174 214)">
+                <path d="M0 -92 L80 -46 L80 46 L0 92 L-80 46 L-80 -46 Z" fill={pal.a} fill-opacity="0.08" stroke={pal.b} stroke-opacity="0.5" stroke-width="2" />
+                <path d="M0 -92 L80 -46 L0 0 L-80 -46 Z" fill={acc} fill-opacity="0.85" />
+                <path d="M0 0 L80 -46 L80 46 L0 92 Z" fill={pal.a} fill-opacity="0.45" />
+                <path d="M0 0 L-80 -46 L-80 46 L0 92 Z" fill={pal.b} fill-opacity="0.25" />
+              </g>
+              {[0, 1, 2, 3].map((i) => (
+                <g transform={`translate(${344 + (i % 2) * 150} ${66 + Math.floor(i / 2) * 160})`}>
+                  <rect width="138" height="148" rx="12" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+                  <g transform="translate(69 56)">
+                    <path d="M0 -30 L26 -15 L26 15 L0 30 L-26 15 L-26 -15 Z" fill={i === 1 ? pal.b : ln} fill-opacity={i === 1 ? 0.6 : 0.16} />
+                    <path d="M0 -30 L26 -15 L0 0 L-26 -15 Z" fill={ink} fill-opacity="0.15" />
+                  </g>
+                  <rect x="14" y="104" width="80" height="8" rx="4" fill={ink} fill-opacity="0.7" />
+                  <rect x="14" y="122" width="54" height="7" rx="3.5" fill={ln} fill-opacity="0.35" />
+                </g>
+              ))}
+            </g>
+          )}
+
+          {kind === 'calendar' && (
+            <g>
+              <rect x="24" y="64" width="150" height="14" rx="7" fill={ink} fill-opacity="0.75" />
+              <rect x="24" y="86" width="96" height="8" rx="4" fill={ln} fill-opacity="0.35" />
+              {[0, 1, 2, 3, 4, 5, 6].map((d) => (
+                <rect x={24 + d * 64} y="112" width="40" height="7" rx="3.5" fill={ln} fill-opacity="0.3" />
+              ))}
+              {Array.from({ length: 28 }, (_, i) => i).map((i) => (
+                <g>
+                  <rect
+                    x={24 + (i % 7) * 64}
+                    y={130 + Math.floor(i / 7) * 62}
+                    width="56"
+                    height="54"
+                    rx="10"
+                    fill={i === 9 || i === 17 ? pal.a : ln}
+                    fill-opacity={i === 9 || i === 17 ? 0.3 : 0.05}
+                    stroke={i === 9 || i === 17 ? pal.b : ln}
+                    stroke-opacity={i === 9 || i === 17 ? 0.6 : 0.1}
+                  />
+                  {(i % 3 === 0 || i === 9 || i === 17) && (
+                    <rect
+                      x={32 + (i % 7) * 64}
+                      y={164 + Math.floor(i / 7) * 62}
+                      width="32"
+                      height="7"
+                      rx="3.5"
+                      fill={i === 9 || i === 17 ? pal.b : ln}
+                      fill-opacity={i === 9 || i === 17 ? 0.9 : 0.3}
+                    />
+                  )}
+                </g>
+              ))}
+              <rect x="476" y="64" width="160" height="312" rx="14" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              <rect x="490" y="78" width="132" height="84" rx="10" fill={acc} />
+              {[0, 1, 2].map((i) => (
+                <g transform={`translate(490 ${180 + i * 62})`}>
+                  <rect width="132" height="50" rx="10" fill={ln} fill-opacity="0.07" />
+                  <rect x="12" y="14" width="80" height="8" rx="4" fill={ink} fill-opacity="0.65" />
+                  <rect x="12" y="30" width="54" height="7" rx="3.5" fill={ln} fill-opacity="0.35" />
+                </g>
+              ))}
+            </g>
+          )}
+
+          {kind === 'route' && (
+            <g>
+              <rect x="24" y="64" width="400" height="312" rx="14" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              <path d="M24 150 H424 M24 260 H424 M140 64 V376 M300 64 V376" stroke={ln} stroke-opacity="0.08" stroke-width="14" />
+              <path d="M70 330 C 70 260, 150 270, 170 220 S 230 130, 300 140 S 380 110, 380 96" fill="none" stroke={pal.b} stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" />
+              <circle cx="70" cy="330" r="12" fill={ln} fill-opacity="0.3" />
+              <circle cx="70" cy="330" r="5" fill={ink} />
+              <circle cx="380" cy="96" r="18" fill={pal.a} fill-opacity="0.25" />
+              <circle cx="380" cy="96" r="7" fill={pal.b} />
+              <rect x="194" y="172" width="36" height="28" rx="8" fill={acc} />
+              <rect x="444" y="64" width="192" height="312" rx="14" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              {[0, 1, 2, 3].map((i) => (
+                <g transform={`translate(464 ${92 + i * 70})`}>
+                  <circle cx="10" cy="10" r="9" fill={i < 2 ? pal.b : ln} fill-opacity={i < 2 ? 0.9 : 0.25} />
+                  {i < 3 && <rect x="9" y="22" width="2" height="44" fill={ln} fill-opacity="0.25" />}
+                  <rect x="32" y="2" width="100" height="8" rx="4" fill={ink} fill-opacity={i < 2 ? 0.75 : 0.4} />
+                  <rect x="32" y="18" width="66" height="7" rx="3.5" fill={ln} fill-opacity="0.3" />
+                </g>
+              ))}
+            </g>
+          )}
+
+          {kind === 'dashboard' && (
+            <g>
+              <rect x="0" y="45" width="132" height="355" fill={ln} fill-opacity="0.04" />
+              <rect x="20" y="66" width="34" height="34" rx="9" fill={acc} />
+              {[0, 1, 2, 3].map((i) => (
+                <rect x="20" y={124 + i * 24} width={88 - i * 8} height="9" rx="4.5" fill={ln} fill-opacity={i === 0 ? 0.45 : 0.22} />
+              ))}
+              {[0, 1, 2].map((i) => (
+                <g transform={`translate(${156 + i * 162} 66)`}>
+                  <rect width="146" height="76" rx="12" fill={ln} fill-opacity="0.06" stroke={ln} stroke-opacity="0.12" />
+                  <rect x="16" y="18" width="60" height="8" rx="4" fill={ln} fill-opacity="0.35" />
+                  <rect x="16" y="40" width={i === 1 ? 92 : 74} height="16" rx="5" fill={i === 1 ? pal.b : ink} fill-opacity={i === 1 ? 0.75 : 0.8} />
+                </g>
+              ))}
+              <rect x="156" y="160" width="290" height="216" rx="12" fill={ln} fill-opacity="0.04" stroke={ln} stroke-opacity="0.12" />
+              <path d="M176 336 C 210 326, 228 280, 262 288 S 320 236, 352 250 S 400 206, 426 200 L426 360 L176 360Z" fill={`url(#${uid}-area)`} />
+              <path d="M176 336 C 210 326, 228 280, 262 288 S 320 236, 352 250 S 400 206, 426 200" fill="none" stroke={pal.b} stroke-width="3" />
+              <rect x="462" y="160" width="174" height="216" rx="12" fill={ln} fill-opacity="0.04" stroke={ln} stroke-opacity="0.12" />
+              <circle cx="549" cy="246" r="52" fill="none" stroke={ln} stroke-opacity="0.15" stroke-width="16" />
+              <circle cx="549" cy="246" r="52" fill="none" stroke={pal.a} stroke-width="16" stroke-dasharray="210 330" transform="rotate(-90 549 246)" />
+              <rect x="490" y="320" width="118" height="8" rx="4" fill={ln} fill-opacity="0.35" />
+              <rect x="510" y="340" width="78" height="8" rx="4" fill={ln} fill-opacity="0.22" />
+            </g>
+          )}
+
+          {kind === 'map' && (
+            <g>
+              <rect x="24" y="64" width="612" height="312" rx="14" fill={ln} fill-opacity="0.05" stroke={ln} stroke-opacity="0.12" />
+              <path d="M24 170 C 160 140, 220 240, 340 210 S 520 120, 636 160" fill="none" stroke={ln} stroke-opacity="0.16" stroke-width="12" />
+              <path d="M200 64 C 220 170, 160 260, 240 376" fill="none" stroke={ln} stroke-opacity="0.1" stroke-width="9" />
+              <path d="M460 64 C 430 160, 520 280, 480 376" fill="none" stroke={ln} stroke-opacity="0.1" stroke-width="9" />
+              {mapPins.map(([cx, cy, hot]) => (
+                <g>
+                  <circle cx={cx} cy={cy} r={hot ? 34 : 14} fill={hot ? pal.a : pal.b} fill-opacity={hot ? 0.18 : 0.15} />
+                  <circle cx={cx} cy={cy} r={hot ? 10 : 5} fill={hot ? pal.b : ink} />
+                </g>
+              ))}
+              <g transform="translate(404 88)">
+                <rect width="210" height="96" rx="14" fill="#060B16" fill-opacity="0.9" stroke={pal.b} stroke-opacity="0.45" />
+                <rect x="16" y="16" width="40" height="40" rx="10" fill={acc} />
+                <rect x="68" y="22" width="110" height="9" rx="4.5" fill={ink} fill-opacity="0.75" />
+                <rect x="68" y="40" width="76" height="7" rx="3.5" fill={ln} fill-opacity="0.35" />
+                <rect x="16" y="68" width="178" height="12" rx="6" fill={pal.b} fill-opacity="0.2" />
+              </g>
+            </g>
+          )}
+
+          {/* sigla del progetto nella barra della finestra */}
+          <g transform="translate(84 8)">
+            <rect width="56" height="28" rx="9" fill={acc} fill-opacity="0.9" />
+            <text x="28" y="19" text-anchor="middle" font-family="Inter Display, Inter, Arial, sans-serif" font-size="13" font-weight="700" fill={ink}>{initials}</text>
+          </g>
+        </g>
+      </svg>
+      <span
+        class="absolute bottom-3 left-3 z-[1] inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-bg/85 px-2.5 py-1 text-[0.7rem] font-semibold text-ink/85"
+        aria-hidden="true"
+      >
+        <span class="h-1.5 w-1.5 rounded-full" style={`background:${pal.b}`}></span>
+        {label}
+      </span>
+    </div>
+  )
+}

@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+---
+
+<nav aria-label="Percorso di navigazione" class="text-[0.85rem]">
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-muted">
+    {
+      items.map((item, i) => (
+        <li class="flex items-center gap-2">
+          {i > 0 && <Icon name="arrow-right" size={13} class="opacity-40" />}
+          {item.href && i < items.length - 1 ? (
+            <a href={item.href} class="transition-colors hover:text-ink">
+              {item.label}
+            </a>
+          ) : (
+            <span aria-current="page" class="text-ink">
+              {item.label}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

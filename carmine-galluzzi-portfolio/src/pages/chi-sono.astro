@@ -1,0 +1,284 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CtaBanner from '../components/CtaBanner.astro';
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
+import { extendedBio, site, getSameAs } from '../config/site';
+import { competences } from '../data/services';
+import { getFeaturedProjects } from '../data/projects';
+import { t } from '../i18n/ui';
+
+const siteUrl = Astro.site?.href;
+const sameAs = getSameAs();
+const photo = site.photo;
+const selection = getFeaturedProjects(4).slice(0, 2);
+
+// Dati strutturati della pagina profilo: solo informazioni vere.
+const profileLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  name: `Chi sono — ${site.name}`,
+  inLanguage: 'it-IT',
+  mainEntity: {
+    '@type': 'Person',
+    ...(siteUrl ? { '@id': `${siteUrl}#person`, url: siteUrl } : {}),
+    name: site.name,
+    jobTitle: site.jobTitle,
+    description: site.bio,
+    ...(sameAs.length ? { sameAs } : {}),
+  },
+};
+
+const principles = [
+  { title: 'Semplicità', text: 'Software chiaro da usare e da mantenere. La complessità si aggiunge solo quando serve davvero.' },
+  { title: 'Solidità', text: 'Basi tecniche affidabili: architettura ordinata, dati strutturati bene, prestazioni curate.' },
+  { title: 'Evoluzione', text: 'Rilasci progressivi e verificabili, per far crescere il prodotto insieme ai suoi utenti.' },
+];
+
+const approach = [
+  { icon: 'search', title: 'Capire prima di sviluppare', text: 'Ogni progetto parte da obiettivi, utenti e vincoli reali, non dalla tecnologia.' },
+  { icon: 'pencil', title: 'Una prima versione essenziale', text: 'Definisco il nucleo di funzionalità che serve davvero per partire e validare l’idea.' },
+  { icon: 'code', title: 'Sviluppo per rilasci', text: 'Procedo per fasi brevi e verificabili, così il progetto resta sotto controllo.' },
+  { icon: 'rocket', title: 'Pensare alla crescita', text: 'Struttura e codice vengono scelti per poter evolvere quando il progetto cresce.' },
+] as const;
+
+const technologies = ['JavaScript', 'TypeScript', 'React', 'Astro', 'Supabase', 'GitHub', 'Netlify', 'Integrazioni API', 'Automazioni e AI'];
+
+const sectors = [
+  'Marketplace di servizi professionali',
+  'Pronto intervento e assistenza',
+  'Commercio e attività locali',
+  'Turismo, eventi ed esperienze',
+  'Logistica e consegne urbane',
+  'Comunicazioni private',
+  'E-commerce e stampa 3D',
+  'Assistenza tecnologica',
+];
+---
+
+<BaseLayout
+  title="Chi sono"
+  description="Chi è Carmine Galluzzi: sviluppatore software per aziende e startup e fondatore di progetti digitali. Visione, tecnologie e metodo nello sviluppo di piattaforme SaaS e marketplace."
+  type="profile"
+  jsonLd={profileLd}
+>
+  <!-- Presentazione -->
+  <section class="relative overflow-hidden" aria-labelledby="about-title">
+    <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+    <div class="glow -left-56 -top-56 h-[38rem] w-[38rem] text-primary/20" aria-hidden="true"></div>
+    <div class="container-x relative grid items-center gap-12 pb-20 pt-12 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-24 lg:pt-20">
+      <div>
+        <p class="hero-in eyebrow">Chi sono</p>
+        <h1 id="about-title" class="hero-in display-xl mt-6 text-ink" style="--d:80ms">{site.name}</h1>
+        <p class="hero-in mt-5 font-display text-[clamp(1.25rem,1.05rem+0.8vw,1.65rem)] font-bold tracking-tight text-gradient" style="--d:140ms">
+          {site.jobTitle}
+        </p>
+        <div class="hero-in lead mt-7 max-w-xl space-y-4" style="--d:220ms">
+          <p>
+            Sono uno sviluppatore software per aziende e startup. Progetto e sviluppo piattaforme SaaS, marketplace,
+            applicazioni web e soluzioni basate sull’intelligenza artificiale, per clienti in Italia e all’estero.
+          </p>
+          <p>
+            Sono anche fondatore di progetti digitali miei: piattaforme che seguo dall’idea iniziale fino alla messa online.
+            Per questo guardo ogni progetto non solo dal lato tecnico, ma anche da quello di chi deve farlo funzionare come
+            prodotto.
+          </p>
+        </div>
+      </div>
+
+      <!-- Spazio per la fotografia personale -->
+      <figure class="hero-in relative mx-auto w-full max-w-[24rem]" style="--d:200ms">
+        <div class="photo-frame relative aspect-[4/5] overflow-hidden rounded-[2rem] p-px">
+          <div class="relative h-full w-full overflow-hidden rounded-[calc(2rem-1px)] bg-bg-2">
+            {
+              photo ? (
+                <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="eager" decoding="async" class="h-full w-full object-cover" />
+              ) : (
+                <div class="relative grid h-full w-full place-items-center" aria-hidden="true">
+                  <div class="bg-grid absolute inset-0" />
+                  <div class="glow left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 text-primary/30" />
+                  <Logo size={132} class="relative" />
+                </div>
+              )
+            }
+          </div>
+        </div>
+        <figcaption class="glass absolute -bottom-5 left-1/2 flex w-max -translate-x-1/2 items-center gap-3 rounded-full px-4 py-2.5 text-sm">
+          <span class="pulse-dot h-2 w-2 rounded-full bg-cyan" aria-hidden="true"></span>
+          <span class="font-semibold text-ink">{site.name}</span>
+          <span class="hidden text-muted sm:inline">· Founder</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Frase manifesto -->
+  <section class="section border-y border-line bg-bg-2/60" aria-label="Manifesto">
+    <div class="container-x">
+      <blockquote class="reveal mx-auto max-w-5xl text-center">
+        <Icon name="spark" size={28} class="mx-auto text-cyan" />
+        <p class="display-lg mt-8 text-ink">
+          {t('about.quote.a')} <span class="text-gradient">{t('about.quote.b')}</span>
+        </p>
+        <footer class="mono mt-8 text-sm uppercase tracking-[0.16em] text-muted">— {site.name}</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Filosofia -->
+  <section class="section" aria-labelledby="philosophy-title">
+    <div class="container-x grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+      <div class="reveal">
+        <p class="eyebrow">Filosofia</p>
+        <h2 id="philosophy-title" class="h-section mt-5 text-ink">La mia visione dello sviluppo software</h2>
+        <div class="lead mt-6 space-y-4">
+          <p>
+            Credo in un software semplice da usare, veloce e costruito su basi solide. La tecnologia è uno strumento: il
+            punto di partenza è sempre il problema da risolvere per le persone che useranno la piattaforma.
+          </p>
+          <p>Preferisco soluzioni chiare e manutenibili a soluzioni complesse, e rilasci progressivi a lunghi sviluppi senza verifiche intermedie.</p>
+        </div>
+      </div>
+      <ol class="space-y-4">
+        {
+          principles.map((p, i) => (
+            <li class="card card-glow reveal flex gap-6 p-6 sm:p-8">
+              <span class="mono text-sm text-cyan">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 class="h-card text-ink">{p.title}</h3>
+                <p class="mt-2 leading-relaxed text-muted">{p.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    extendedBio.length > 0 && (
+      <section class="section pt-0" aria-labelledby="bio-title">
+        <div class="container-x max-w-3xl">
+          <h2 id="bio-title" class="h-section text-ink">Il mio percorso</h2>
+          <div class="lead mt-6 space-y-4">
+            {extendedBio.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Competenze -->
+  <section class="section relative bg-bg-2/60" aria-labelledby="skills-title">
+    <div class="divider-glow absolute inset-x-0 top-0 opacity-50" aria-hidden="true"></div>
+    <div class="container-x">
+      <SectionHeading id="skills-title" eyebrow="Competenze" title="Cosa so costruire" intro="Le aree in cui progetto e sviluppo, con lo stack che utilizzo ogni giorno." />
+      <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          competences.map((c) => (
+            <li class="card card-glow reveal group relative p-6">
+              <span class="icon-tile">
+                <Icon name={c.icon} size={22} strokeWidth={1.6} />
+              </span>
+              <h3 class="h-card mt-5 text-ink">
+                <a href={c.href} class="stretched-link">{c.title}</a>
+              </h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{c.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="reveal mt-10 flex flex-wrap items-center gap-2">
+        <span class="mono mr-2 text-[0.7rem] uppercase tracking-[0.16em] text-muted">Tecnologie</span>
+        {technologies.map((tech) => <span class="tag">{tech}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Approccio -->
+  <section class="section" aria-labelledby="approach-title">
+    <div class="container-x">
+      <SectionHeading id="approach-title" eyebrow="Metodo" title="Come affronto nuovi progetti" />
+      <ol class="mt-12 grid gap-4 sm:grid-cols-2">
+        {
+          approach.map((a, i) => (
+            <li class="card reveal flex gap-5 p-6 sm:p-8">
+              <span class="icon-tile shrink-0">
+                <Icon name={a.icon} size={22} />
+              </span>
+              <div>
+                <p class="mono text-xs text-muted">{String(i + 1).padStart(2, '0')}</p>
+                <h3 class="h-card mt-1 text-ink">{a.title}</h3>
+                <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{a.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Visione imprenditoriale -->
+  <section class="section relative overflow-hidden border-y border-line bg-bg-2/60" aria-labelledby="vision-title">
+    <div class="glow -right-40 top-0 h-96 w-96 text-violet/15" aria-hidden="true"></div>
+    <div class="container-x relative grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="reveal">
+        <p class="eyebrow">Visione imprenditoriale</p>
+        <h2 id="vision-title" class="h-section mt-5 text-ink">Costruire prodotti, non solo progetti</h2>
+        <div class="lead mt-6 space-y-4">
+          <p>
+            Come fondatore lavoro su piattaforme che nascono da esigenze concrete: trovare un professionista in
+            un’urgenza, dare visibilità alle attività locali, organizzare consegne, scoprire una città, comunicare in modo
+            riservato.
+          </p>
+          <p>
+            L’obiettivo è sempre lo stesso: trasformare un’idea in un servizio digitale utile, sostenibile e pronto a
+            crescere. È lo stesso approccio che porto nei progetti che sviluppo per altre aziende e startup.
+          </p>
+        </div>
+      </div>
+      <div class="reveal">
+        <h3 class="mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-muted">I settori digitali su cui lavoro</h3>
+        <ul class="mt-5 grid gap-3 sm:grid-cols-2">
+          {
+            sectors.map((s) => (
+              <li class="flex items-center gap-3 rounded-2xl border border-line bg-bg/50 px-4 py-3.5 text-[0.9375rem] text-ink/90">
+                <Icon name="check" size={18} class="shrink-0 text-cyan" />
+                {s}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selezione delle piattaforme -->
+  <section class="section" aria-labelledby="selection-title">
+    <div class="container-x">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <SectionHeading id="selection-title" eyebrow="Portfolio" title="Alcune delle mie piattaforme" />
+        <a href="/portfolio/" class="btn btn-ghost shrink-0 self-start md:self-auto">
+          {t('cta.allProjects')}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+      <div class="mt-12 grid gap-6 md:grid-cols-2">
+        {selection.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBanner />
+</BaseLayout>
+
+<style>
+  .photo-frame {
+    background: linear-gradient(150deg, rgb(59 130 246 / 0.7), rgb(34 211 238 / 0.25) 40%, rgb(139 92 246 / 0.6));
+    box-shadow: 0 40px 90px -40px rgb(59 130 246 / 0.6);
+  }
+</style>

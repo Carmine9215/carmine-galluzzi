@@ -1,0 +1,122 @@
+---
+/**
+ * STRUTTURA DI INFORMATIVA PRIVACY (bozza).
+ * Non è una privacy policy definitiva né una consulenza legale.
+ * I campi evidenziati in giallo vanno completati in src/config/site.ts (oggetto `legal`)
+ * e il testo va verificato, preferibilmente con un professionista, prima della pubblicazione.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { legal, contacts } from '../config/site';
+
+const privacyEmail = legal.privacyEmail || contacts.email;
+const reviewed = legal.privacyReviewed;
+---
+
+<BaseLayout
+  title="Informativa privacy"
+  description="Informativa sul trattamento dei dati personali raccolti tramite il sito e il modulo di contatto di Carmine Galluzzi."
+>
+  <section class="container-x max-w-3xl pb-24 pt-12 sm:pt-16" aria-labelledby="privacy-title">
+    <p class="eyebrow">Privacy</p>
+    <h1 id="privacy-title" class="mt-4 text-4xl font-extrabold text-ink sm:text-5xl">Informativa privacy</h1>
+    <p class="mt-4 text-sm text-muted">
+      Informativa ai sensi degli artt. 13 e 14 del Regolamento (UE) 2016/679 (GDPR).
+      {legal.lastUpdated ? <>Ultimo aggiornamento: {legal.lastUpdated}.</> : <span class="todo">DA COMPLETARE: data di aggiornamento</span>}
+    </p>
+
+    {
+      !reviewed && (
+        <div class="mt-8 rounded-2xl border border-dashed border-yellow-400/50 bg-yellow-400/5 p-5 text-sm leading-relaxed text-yellow-100">
+          <strong class="text-yellow-200">Bozza in fase di completamento.</strong> Questa informativa è una struttura
+          preliminare: le parti evidenziate devono essere completate e il testo verificato prima della pubblicazione
+          definitiva. Il contenuto non costituisce consulenza legale.
+        </div>
+      )
+    }
+
+    <div class="prose-site mt-10">
+      <h2>1. Titolare del trattamento</h2>
+      <p>
+        Il titolare del trattamento è <strong class="text-ink">{legal.ownerName}</strong>
+        {legal.vatNumber ? <>, P. IVA {legal.vatNumber}</> : <>, <span class="todo">DA COMPLETARE: P. IVA (se presente)</span></>},
+        con sede in {legal.ownerAddress ? legal.ownerAddress : <span class="todo">DA COMPLETARE: indirizzo</span>}.
+      </p>
+      <p>
+        Per qualsiasi richiesta relativa ai tuoi dati puoi scrivere a
+        {privacyEmail ? <a href={`mailto:${privacyEmail}`}>{privacyEmail}</a> : <span class="todo">DA COMPLETARE: email di contatto privacy</span>}.
+      </p>
+
+      <h2>2. Dati raccolti</h2>
+      <h3>Dati forniti volontariamente tramite il modulo di contatto</h3>
+      <p>
+        Nome e cognome, indirizzo email, eventuale azienda, tipologia di servizio, eventuale budget indicativo e la
+        descrizione del progetto, oltre alla conferma di presa visione della presente informativa.
+      </p>
+      <h3>Dati tecnici di navigazione</h3>
+      <p>
+        I sistemi che rendono disponibile il sito possono registrare dati tecnici necessari al funzionamento e alla
+        sicurezza del servizio (ad esempio indirizzo IP, data e ora della richiesta, tipo di browser).
+        <span class="todo">DA VERIFICARE: dati effettivamente registrati dal fornitore di hosting</span>
+      </p>
+
+      <h2>3. Finalità e base giuridica</h2>
+      <ul>
+        <li>
+          Rispondere alla tua richiesta di informazioni o di preventivo e gestire i contatti successivi: esecuzione di
+          misure precontrattuali adottate su tua richiesta (art. 6, par. 1, lett. b GDPR).
+        </li>
+        <li>
+          Garantire la sicurezza del sito e prevenire abusi e spam: legittimo interesse del titolare (art. 6, par. 1,
+          lett. f GDPR).
+        </li>
+      </ul>
+      <p>I dati non vengono utilizzati per finalità di marketing né ceduti a terzi per tali scopi.</p>
+
+      <h2>4. Modalità del trattamento e destinatari</h2>
+      <p>
+        I dati sono trattati con strumenti elettronici e misure di sicurezza adeguate. Il sito è ospitato su
+        Netlify, che riceve e conserva anche i messaggi inviati tramite il modulo di contatto (servizio Netlify Forms) e
+        agisce in qualità di responsabile del trattamento.
+        <span class="todo">DA VERIFICARE: accordo sul trattamento dei dati (DPA) con Netlify e garanzie per il trasferimento dei dati extra UE</span>
+      </p>
+      <p>
+        Eventuali altri destinatari: <span class="todo">DA COMPLETARE (es. servizio email utilizzato per ricevere le notifiche)</span>
+      </p>
+
+      <h2>5. Periodo di conservazione</h2>
+      <p>
+        I dati inviati tramite il modulo sono conservati per il tempo necessario a gestire la richiesta e gli eventuali
+        rapporti successivi.
+        <span class="todo">DA COMPLETARE: periodo massimo di conservazione</span>
+      </p>
+
+      <h2>6. Natura del conferimento</h2>
+      <p>
+        Il conferimento dei dati contrassegnati come obbligatori nel modulo è necessario per poter rispondere alla
+        richiesta. I campi facoltativi possono essere lasciati vuoti.
+      </p>
+
+      <h2>7. Cookie e strumenti di tracciamento</h2>
+      <p>
+        Il sito non utilizza cookie di profilazione, cookie di marketing né strumenti di analisi statistica di terze
+        parti (ad esempio Google Analytics o Meta Pixel).
+        <span class="todo">DA VERIFICARE: eventuali cookie tecnici impostati dal fornitore di hosting</span>
+      </p>
+
+      <h2>8. Diritti dell’interessato</h2>
+      <p>
+        In qualsiasi momento puoi esercitare i diritti previsti dagli artt. 15–22 del GDPR: accesso ai dati, rettifica,
+        cancellazione, limitazione del trattamento, portabilità e opposizione, scrivendo al contatto indicato al punto 1.
+      </p>
+      <p>
+        Hai inoltre il diritto di proporre reclamo all’autorità di controllo competente, in Italia il Garante per la
+        protezione dei dati personali.
+      </p>
+
+      <h2>9. Modifiche all’informativa</h2>
+      <p>
+        L’informativa può essere aggiornata nel tempo. La versione in vigore è sempre quella pubblicata su questa pagina.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

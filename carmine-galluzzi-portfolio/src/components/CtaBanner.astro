@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+
+interface Props {
+  title?: string;
+  text?: string;
+  buttonLabel?: string;
+  href?: string;
+}
+
+const {
+  title = t('cta.final.title'),
+  text = t('cta.final.text'),
+  buttonLabel = t('cta.final.button'),
+  href = '/contatti/',
+} = Astro.props;
+---
+
+<section class="section pt-0" aria-labelledby="cta-title">
+  <div class="container-x">
+    <div class="cta-panel reveal relative overflow-hidden rounded-[2rem] border border-line px-6 py-16 text-center sm:px-12 sm:py-24">
+      <div class="bg-grid absolute inset-0 opacity-80" aria-hidden="true"></div>
+      <div class="glow left-1/2 top-[-40%] h-[28rem] w-[48rem] -translate-x-1/2 text-primary/35" aria-hidden="true"></div>
+      <div class="glow bottom-[-60%] right-[-10%] hidden h-96 w-[30rem] text-violet/25 sm:block" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-3xl">
+        <h2 id="cta-title" class="display-lg text-ink">{title}</h2>
+        <p class="lead mx-auto mt-6 max-w-xl">{text}</p>
+        <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+          <a href={href} class="btn btn-primary btn-lg">
+            {buttonLabel}
+            <Icon name="arrow-right" size={18} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-panel {
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgb(59 130 246 / 0.12), transparent 70%),
+      linear-gradient(180deg, #0d1526, #0a1222);
+  }
+</style>

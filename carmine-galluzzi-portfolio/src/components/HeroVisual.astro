@@ -1,0 +1,167 @@
+---
+/**
+ * Visual della hero: ecosistema software astratto (SVG + CSS, nessuna libreria 3D).
+ * Al centro lo spazio per la fotografia personale: finché `site.photo` è null mostra il monogramma CG.
+ * Interamente decorativo per i lettori di schermo, tranne la fotografia quando presente.
+ */
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+
+const photo = site.photo;
+const nodes = [
+  { icon: 'cloud', label: 'Cloud', x: '20%', y: '9%' },
+  { icon: 'ai', label: 'AI', x: '84%', y: '15%' },
+  { icon: 'api', label: 'API', x: '97%', y: '47%' },
+  { icon: 'database', label: 'Data', x: '13%', y: '89%' },
+] as const;
+---
+
+<div class="hero-visual relative mx-auto aspect-square w-full max-w-[34rem]">
+  <!-- Anelli orbitali e connessioni -->
+  <svg viewBox="0 0 500 500" class="absolute inset-0 h-full w-full" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="hv-ring" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#3B82F6" stop-opacity="0.65"></stop>
+        <stop offset="0.5" stop-color="#22D3EE" stop-opacity="0.35"></stop>
+        <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.6"></stop>
+      </linearGradient>
+      <linearGradient id="hv-line" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#22D3EE" stop-opacity="0"></stop>
+        <stop offset="0.5" stop-color="#22D3EE" stop-opacity="0.9"></stop>
+        <stop offset="1" stop-color="#3B82F6" stop-opacity="0"></stop>
+      </linearGradient>
+      <radialGradient id="hv-core" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#3B82F6" stop-opacity="0.35"></stop>
+        <stop offset="1" stop-color="#3B82F6" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+    <circle cx="250" cy="250" r="235" fill="url(#hv-core)"></circle>
+    <g class="spin-slow">
+      <circle cx="250" cy="250" r="205" fill="none" stroke="url(#hv-ring)" stroke-width="1"></circle>
+      <circle cx="455" cy="250" r="4" fill="#22D3EE"></circle>
+      <circle cx="105" cy="105" r="3" fill="#8B5CF6"></circle>
+    </g>
+    <circle cx="250" cy="250" r="150" fill="none" stroke="#94A3B8" stroke-opacity="0.16" stroke-dasharray="2 8"></circle>
+    <circle cx="250" cy="250" r="95" fill="none" stroke="#94A3B8" stroke-opacity="0.12"></circle>
+    <!-- connessioni centro → nodi -->
+    <g fill="none" stroke-width="1.25" stroke-linecap="round">
+      <path d="M250 250 L 100 45" stroke="#94A3B8" stroke-opacity="0.18"></path>
+      <path d="M250 250 L 420 75" stroke="#94A3B8" stroke-opacity="0.18"></path>
+      <path d="M250 250 L 485 235" stroke="#94A3B8" stroke-opacity="0.18"></path>
+      <path d="M250 250 L 65 445" stroke="#94A3B8" stroke-opacity="0.18"></path>
+      <path class="dash-flow" d="M250 250 L 100 45" stroke="url(#hv-line)" stroke-dasharray="14 106"></path>
+      <path class="dash-flow" d="M250 250 L 420 75" stroke="url(#hv-line)" stroke-dasharray="14 106" style="animation-delay:-1.5s"></path>
+      <path class="dash-flow" d="M250 250 L 485 235" stroke="url(#hv-line)" stroke-dasharray="14 106" style="animation-delay:-3s"></path>
+      <path class="dash-flow" d="M250 250 L 65 445" stroke="url(#hv-line)" stroke-dasharray="14 106" style="animation-delay:-4.5s"></path>
+    </g>
+  </svg>
+
+  <!-- Nucleo: fotografia o monogramma -->
+  <div class="absolute left-1/2 top-1/2 w-[42%] -translate-x-1/2 -translate-y-1/2">
+    <div class="portrait-ring relative aspect-square rounded-full p-[3px]">
+      <div class="relative h-full w-full overflow-hidden rounded-full bg-[#0B1426]">
+        {
+          photo ? (
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              loading="eager"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          ) : (
+            <div class="grid h-full w-full place-items-center" aria-hidden="true">
+              <div class="bg-grid absolute inset-0 opacity-70" />
+              <span class="relative font-display text-[clamp(2.75rem,9vw,4.75rem)] font-bold leading-none tracking-[-0.06em] text-ink">
+                {site.monogram}<span class="text-cyan">.</span>
+              </span>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Nodi tecnologici -->
+  {
+    nodes.map((n, i) => (
+      <div
+        class="float-slow absolute hidden -translate-x-1/2 -translate-y-1/2 sm:block"
+        style={`left:${n.x};top:${n.y};--d:${i * -1.6}s`}
+        aria-hidden="true"
+      >
+        <div class="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3">
+          <span class="grid h-7 w-7 place-items-center rounded-full bg-primary/15 text-cyan">
+            <Icon name={n.icon} size={15} />
+          </span>
+          <span class="mono text-[0.7rem] font-medium text-ink/85">{n.label}</span>
+        </div>
+      </div>
+    ))
+  }
+
+  <!-- Finestra dashboard astratta -->
+  <div
+    class="float-slow glass absolute left-[-8%] top-[36%] hidden w-[44%] rounded-2xl p-3 shadow-2xl shadow-black/50 sm:block"
+    style="--d:-2s"
+    aria-hidden="true"
+  >
+    <div class="flex items-center gap-1.5">
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/50"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/35"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/20"></span>
+      <span class="mono ml-auto text-[0.6rem] text-muted">dashboard</span>
+    </div>
+    <svg viewBox="0 0 160 70" class="mt-2 w-full" focusable="false">
+      <defs>
+        <linearGradient id="hv-area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#22D3EE" stop-opacity="0.35"></stop>
+          <stop offset="1" stop-color="#22D3EE" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0 52 C 20 48, 30 30, 50 34 S 80 18, 100 24 S 135 8, 160 12 L160 70 L0 70Z" fill="url(#hv-area)"></path>
+      <path d="M0 52 C 20 48, 30 30, 50 34 S 80 18, 100 24 S 135 8, 160 12" fill="none" stroke="#22D3EE" stroke-width="1.6"></path>
+      <g fill="#3B82F6" fill-opacity="0.55">
+        <rect x="6" y="60" width="10" height="10" rx="2"></rect>
+        <rect x="22" y="56" width="10" height="14" rx="2"></rect>
+        <rect x="38" y="58" width="10" height="12" rx="2"></rect>
+      </g>
+    </svg>
+    <div class="mt-2 grid grid-cols-3 gap-1.5">
+      <span class="h-5 rounded-md bg-white/[0.05]"></span>
+      <span class="h-5 rounded-md bg-white/[0.05]"></span>
+      <span class="h-5 rounded-md bg-violet/25"></span>
+    </div>
+  </div>
+
+  <!-- Finestra di codice stilizzata -->
+  <div
+    class="float-slow glass absolute bottom-[4%] right-[-2%] w-[56%] rounded-2xl p-3.5 shadow-2xl shadow-black/50 sm:bottom-[2%] sm:right-[-6%] sm:w-[50%]"
+    style="--d:-4s"
+    aria-hidden="true"
+  >
+    <div class="flex items-center gap-1.5">
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/50"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/35"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-muted/20"></span>
+      <span class="mono ml-auto text-[0.6rem] text-muted">platform.ts</span>
+    </div>
+    <div class="mono mt-2.5 space-y-1 text-[clamp(0.55rem,1.6vw,0.72rem)] leading-relaxed">
+      <p><span class="text-violet-soft">export const</span> <span class="text-ink">platform</span> = {'{'}</p>
+      <p class="pl-3"><span class="text-primary-soft">idea</span>: <span class="text-cyan">'la tua'</span>,</p>
+      <p class="pl-3"><span class="text-primary-soft">stack</span>: [<span class="text-cyan">'web'</span>, <span class="text-cyan">'ai'</span>],</p>
+      <p>{'}'};</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .portrait-ring {
+    background: conic-gradient(from 210deg, #3b82f6, #22d3ee, #8b5cf6, #3b82f6);
+    box-shadow:
+      0 0 0 10px rgb(6 11 22 / 0.6),
+      0 0 60px -10px rgb(59 130 246 / 0.55);
+  }
+</style>

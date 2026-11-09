@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#060B16"/>
+      <stop offset="1" stop-color="#0D1526"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0.85" cy="0.1" r="0.6">
+      <stop offset="0" stop-color="#3B82F6" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#3B82F6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.05" cy="1" r="0.5">
+      <stop offset="0" stop-color="#8B5CF6" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="0.5" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#93C5FD"/>
+      <stop offset="0.5" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#94A3B8" stroke-opacity="0.06"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <g transform="translate(96 96)">
+    <rect x="2" y="2" width="108" height="108" rx="30" fill="#111D32"/>
+    <rect x="2" y="2" width="108" height="108" rx="30" fill="none" stroke="url(#mark)" stroke-width="3"/>
+    <text x="51" y="72" text-anchor="middle" font-family="Inter Display, Inter, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="-2" fill="#F8FAFC">CG</text>
+    <circle cx="84" cy="68" r="6" fill="#22D3EE"/>
+  </g>
+  <text x="96" y="330" font-family="Inter Display, Inter, Arial, sans-serif" font-size="80" font-weight="700" letter-spacing="-3" fill="#F8FAFC">Carmine Galluzzi</text>
+  <text x="96" y="398" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="600" fill="url(#txt)">Software Developer &amp; SaaS Founder</text>
+  <text x="96" y="500" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="400" fill="#94A3B8">Piattaforme SaaS · Marketplace · Applicazioni web · Soluzioni AI</text>
+  <rect x="96" y="540" width="120" height="4" rx="2" fill="#22D3EE"/>
+</svg>

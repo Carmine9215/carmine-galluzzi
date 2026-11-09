@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import TechStack from '../components/TechStack.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServicesGrid from '../components/ServicesGrid.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CtaBanner from '../components/CtaBanner.astro';
+import Icon from '../components/Icon.astro';
+import { workSteps } from '../data/services';
+import { getFeaturedProjects } from '../data/projects';
+import { site, getSameAs } from '../config/site';
+import { t } from '../i18n/ui';
+
+const featured = getFeaturedProjects(4);
+// Composizione editoriale: grande in evidenza, due standard, una orizzontale
+const variants = ['feature', 'standard', 'standard', 'horizontal'] as const;
+const spans = ['lg:col-span-12', 'lg:col-span-6', 'lg:col-span-6', 'lg:col-span-12'];
+
+const siteUrl = Astro.site?.href;
+const sameAs = getSameAs();
+
+// Dati strutturati: solo informazioni vere e verificabili.
+const person: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: site.jobTitle,
+  description: site.bio,
+  knowsAbout: ['Sviluppo software', 'Piattaforme SaaS', 'Marketplace', 'Applicazioni web', 'Intelligenza artificiale', 'Automazioni', 'Integrazioni API'],
+  ...(siteUrl ? { '@id': `${siteUrl}#person`, url: siteUrl } : {}),
+  ...(sameAs.length ? { sameAs } : {}),
+};
+const website: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  description: site.description,
+  inLanguage: 'it-IT',
+  ...(siteUrl ? { '@id': `${siteUrl}#website`, url: siteUrl, publisher: { '@id': `${siteUrl}#person` } } : {}),
+};
+---
+
+<BaseLayout
+  title="Carmine Galluzzi | Software Developer & SaaS Founder"
+  rawTitle
+  description="Carmine Galluzzi, software developer e SaaS founder in Italia: sviluppo piattaforme SaaS, marketplace, applicazioni web e software personalizzati, con intelligenza artificiale e automazioni AI per aziende."
+  type="profile"
+  jsonLd={[person, website]}
+>
+  <Hero />
+
+  <TechStack />
+
+  <!-- Progetti selezionati -->
+  <section class="section relative bg-bg-2/60" aria-labelledby="projects-title">
+    <div class="divider-glow absolute inset-x-0 top-0 opacity-60" aria-hidden="true"></div>
+    <div class="container-x">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <SectionHeading id="projects-title" eyebrow={t('projects.eyebrow')} title={t('projects.title')} intro={t('projects.subtitle')} />
+        <a href="/portfolio/" class="btn btn-ghost shrink-0 self-start md:self-auto">
+          {t('cta.allProjects')}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+      <div class="mt-14 grid gap-6 lg:grid-cols-12">
+        {
+          featured.map((p, i) => (
+            <div class={spans[i] ?? 'lg:col-span-6'}>
+              <ProjectCard project={p} variant={variants[i] ?? 'standard'} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Servizi -->
+  <section class="section" aria-labelledby="services-title">
+    <div class="container-x">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <SectionHeading
+          id="services-title"
+          eyebrow={t('services.eyebrow')}
+          title={t('services.title')}
+          intro="Dalla prima idea alla piattaforma online: sei aree di intervento, ognuna con un preventivo costruito sul tuo progetto."
+        />
+        <a href="/servizi/" class="btn btn-ghost shrink-0 self-start md:self-auto">
+          {t('cta.allServices')}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+      <div class="reveal mt-14">
+        <ServicesGrid />
+      </div>
+    </div>
+  </section>
+
+  <!-- Metodo di lavoro -->
+  <section class="section relative border-t border-line" aria-labelledby="method-title">
+    <div class="container-x">
+      <SectionHeading
+        id="method-title"
+        eyebrow="Metodo"
+        title="Come lavoro"
+        intro="Un percorso in quattro fasi, chiaro dall’inizio alla pubblicazione."
+      />
+      <ol class="method mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          workSteps.map((step, i) => (
+            <li class="reveal relative">
+              <div class="flex items-center gap-4">
+                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line-strong bg-bg-2 font-mono text-sm text-cyan">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span class="hidden h-px flex-1 bg-linear-to-r from-line-strong to-transparent lg:block" aria-hidden="true" />
+              </div>
+              <h3 class="h-card mt-6 text-ink">{step.title}</h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{step.description}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <CtaBanner />
+</BaseLayout>

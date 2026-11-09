@@ -1,0 +1,100 @@
+---
+/**
+ * Griglia numerata dei servizi (homepage e pagina Servizi).
+ * Ogni card: numero progressivo, icona, titolo, descrizione, indicatore visivo e link al modulo contatti.
+ */
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+import { t } from '../i18n/ui';
+
+interface Props {
+  /** Link del titolo: 'detail' porta alla sezione dettagliata della pagina Servizi */
+  titleLink?: 'detail' | 'none';
+  headingLevel?: 'h2' | 'h3';
+}
+const { titleLink = 'detail', headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<ol class="service-grid grid gap-px overflow-hidden rounded-[1.75rem] border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+  {
+    services.map((s, i) => (
+      <li class="service-card group relative flex flex-col bg-bg-2 p-6 sm:p-8">
+        <div class="flex items-start justify-between gap-4">
+          <span class="mono text-sm font-medium text-muted transition-colors group-hover:text-cyan">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <span class="icon-tile">
+            <Icon name={s.icon} size={22} strokeWidth={1.6} />
+          </span>
+        </div>
+        <Heading class="h-card mt-8 text-ink">
+          {titleLink === 'detail' ? (
+            <a href={`/servizi/#${s.slug}`} class="transition-colors hover:text-cyan">
+              {s.title}
+            </a>
+          ) : (
+            s.title
+          )}
+        </Heading>
+        <p class="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-muted">{s.summary}</p>
+        <div class="mt-8 flex items-center gap-4">
+          <span class="service-line h-px flex-1 bg-line-strong" aria-hidden="true"></span>
+          <a
+            href={`/contatti/?servizio=${s.slug}`}
+            class="link-arrow text-sm"
+            aria-label={`${t('services.cta')}: ${s.title}`}
+          >
+            {t('services.cta')}
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .service-card {
+    transition: background-color 0.35s ease;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(28rem 14rem at 0% 0%, rgb(59 130 246 / 0.1), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .service-card:hover {
+    background-color: #101b30;
+  }
+  .service-card:hover::after {
+    opacity: 1;
+  }
+  .service-card:hover .icon-tile {
+    color: #fff;
+    background: linear-gradient(145deg, var(--color-primary), var(--color-violet));
+    transform: rotate(-4deg) scale(1.05);
+  }
+  /* Indicatore: la linea si illumina al passaggio */
+  .service-line {
+    background: linear-gradient(90deg, var(--color-line-strong), var(--color-line-strong));
+    background-size: 100% 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease-out-soft);
+  }
+  .service-card:hover .service-line::after {
+    transform: scaleX(1);
+  }
+</style>
