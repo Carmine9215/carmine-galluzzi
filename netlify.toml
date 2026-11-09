@@ -1,7 +1,10 @@
+# Il sito Astro si trova nella sottocartella carmine-galluzzi-portfolio/.
+# "base" indica a Netlify dove eseguire install e build; "publish" è relativo a base.
 # Configurazione Netlify — sito Astro statico (nessun adapter SSR, nessuna funzione serverless).
 
 [build]
-  command = "npm run build"
+  base = "carmine-galluzzi-portfolio"
+  command = "npm install --no-audit --no-fund && npm run build"
   publish = "dist"
 
 [build.environment]
